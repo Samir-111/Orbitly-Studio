@@ -1,6 +1,8 @@
 # Orbitly Studio
 
-A full-stack web application built for **Orbitly Studio**, a digital design and product studio. The platform includes a public landing page with dynamic case studies, a technical blog, a project inquiry form, and an admin management dashboard.
+A full-stack web application built for **Orbitly Studio**, a fictional digital design and product studio that helps startups turn ideas into thoughtful, well-designed digital products.
+
+The platform includes a modern public landing page, dynamic case studies, a technical blog, and a secure admin dashboard for managing projects and blog content.
 
 ---
 
@@ -9,28 +11,66 @@ A full-stack web application built for **Orbitly Studio**, a digital design and 
 - **Frontend:** Next.js 14, React 18, TypeScript, Tailwind CSS, Lucide Icons
 - **Backend:** Node.js, Express.js, TypeScript, Mongoose
 - **Database:** MongoDB
-- **Auth & Security:** JWT, bcryptjs, express-rate-limit, Zod validation
+- **Authentication:** JWT, bcryptjs
+- **Validation:** Zod
+- **Security:** express-rate-limit
+- **Content:** Markdown Editor
 
 ---
 
 ## System Workflow
 
 ```text
-[ Public Visitor ]
-       │
-       ├──► Browses Landing Page (Hero, Capabilities, Testimonials)
-       ├──► Views Dynamic Published Projects (/projects/[slug])
-       ├──► Reads Technical Blog Posts (/blog/[slug])
-       └──► Submits Project Inquiry ──► [ Zod Validation ] ──► [ MongoDB (inquiries) ]
-                                                                      │
-[ Studio Admin ]                                                      ▼
-       │                                                    [ Admin Inquiries Panel ]
-       ├──► Logs In (/admin/login) ──► [ JWT (role: admin) ]
-       │                                       │
-       └──► Accesses Admin Dashboard ◄─────────┘
-              ├── Manage Projects (Create / Edit / Delete / Publish Toggle)
-              ├── Write Blog Articles (Markdown Editor / Feature Toggle)
-              └── Review & Respond to Client Inquiries
+                         ┌────────────────────┐
+                         │   Public Visitor   │
+                         └─────────┬──────────┘
+                                   │
+                                   ▼
+                         ┌────────────────────┐
+                         │ Next.js Frontend   │
+                         └─────────┬──────────┘
+                                   │
+                    ┌──────────────┼──────────────┐
+                    │              │              │
+                    ▼              ▼              ▼
+               Projects          Blog        Contact / CTA
+                    │              │
+                    └───────┬──────┘
+                            ▼
+                    ┌──────────────────┐
+                    │ Express REST API │
+                    └────────┬─────────┘
+                             │
+                             ▼
+                    ┌──────────────────┐
+                    │     MongoDB      │
+                    └──────────────────┘
+
+
+                         ┌────────────────────┐
+                         │   Studio Admin     │
+                         └─────────┬──────────┘
+                                   │
+                                   ▼
+                         ┌────────────────────┐
+                         │    Admin Login     │
+                         └─────────┬──────────┘
+                                   │
+                                   ▼
+                         ┌────────────────────┐
+                         │ JWT + Admin Role   │
+                         └─────────┬──────────┘
+                                   │
+                                   ▼
+                         ┌────────────────────┐
+                         │  Admin Dashboard   │
+                         └─────────┬──────────┘
+                                   │
+                    ┌──────────────┼──────────────┐
+                    │              │              │
+                    ▼              ▼              ▼
+               Projects          Blog       Content Status
+               CRUD              CRUD       Publish / Draft
 ```
 
 ### How Data Flows:
