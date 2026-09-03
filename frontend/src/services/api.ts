@@ -1,7 +1,9 @@
 import { Project, BlogPost, Inquiry, AuthResponse, ApiResponse, AdminUser } from '../types';
 
-// Base API URL from environment variable
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+// Base API URL from environment variable with smart /api normalization
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const cleanApiUrl = rawApiUrl.replace(/\/+$/, '');
+const API_URL = cleanApiUrl.endsWith('/api') ? cleanApiUrl : `${cleanApiUrl}/api`;
 
 // ==========================================
 // Authentication Storage Helpers (localStorage)
