@@ -4,55 +4,53 @@ import { Sparkles, Github, Twitter, Linkedin, ArrowUpRight } from 'lucide-react'
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-[#05080F] border-t border-white/5 pt-20 pb-12">
+    <footer className="bg-[#05070D] border-t border-[#20263A] pt-16 pb-12">
       <div className="max-w-7xl mx-auto px-6 sm:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 pb-16 border-b border-white/5">
-          {/* Brand Col */}
-          <div className="md:col-span-2 space-y-6">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-accent-cyan p-[1px]">
-                <div className="w-full h-full bg-[#0B101E] rounded-xl flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-brand-400" />
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-[#20263A]/60">
+          {/* Brand Column */}
+          <div className="md:col-span-2 space-y-4">
+            <Link href="/" className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-surface border border-[#20263A] flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-brand-400" />
               </div>
-              <span className="font-extrabold text-xl tracking-tight text-white flex items-center gap-1.5">
-                ORBITLY<span className="text-brand-400 font-normal text-sm tracking-widest uppercase">Studio</span>
+              <span className="font-extrabold text-lg tracking-tight text-[#F5F5F7] flex items-center gap-1.5">
+                ORBITLY<span className="text-[#8B7CF6] font-medium text-xs tracking-widest uppercase">Studio</span>
               </span>
             </Link>
-            <p className="text-slate-400 text-sm max-w-md leading-relaxed">
-              We engineer world-class digital products, intuitive user experiences, and bulletproof software for ambitious tech companies worldwide.
+            <p className="text-[#9CA3B5] text-sm max-w-sm leading-relaxed font-normal">
+              A digital design and product development studio helping startups turn complex ideas into refined, scalable software.
             </p>
-            <div className="flex items-center gap-4 text-slate-400">
-              <a href="https://twitter.com" target="_blank" rel="noreferrer" className="p-2 rounded-lg bg-surface border border-white/5 hover:text-white hover:border-brand-500/30 transition-all">
-                <Twitter className="w-4 h-4" />
+            <div className="flex items-center gap-3 text-slate-400 pt-2">
+              <a href="https://twitter.com" target="_blank" rel="noreferrer" className="p-2 rounded-lg bg-surface border border-[#20263A] hover:text-white hover:border-brand-500/40 transition-all">
+                <Twitter className="w-3.5 h-3.5" />
               </a>
-              <a href="https://github.com" target="_blank" rel="noreferrer" className="p-2 rounded-lg bg-surface border border-white/5 hover:text-white hover:border-brand-500/30 transition-all">
-                <Github className="w-4 h-4" />
+              <a href="https://github.com" target="_blank" rel="noreferrer" className="p-2 rounded-lg bg-surface border border-[#20263A] hover:text-white hover:border-brand-500/40 transition-all">
+                <Github className="w-3.5 h-3.5" />
               </a>
-              <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="p-2 rounded-lg bg-surface border border-white/5 hover:text-white hover:border-brand-500/30 transition-all">
-                <Linkedin className="w-4 h-4" />
+              <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="p-2 rounded-lg bg-surface border border-[#20263A] hover:text-white hover:border-brand-500/40 transition-all">
+                <Linkedin className="w-3.5 h-3.5" />
               </a>
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="space-y-4">
-            <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Studio Navigation</h4>
-            <ul className="space-y-2.5 text-sm text-slate-400">
-              <li><Link href="/#services" className="hover:text-brand-400 transition-colors">Our Capabilities</Link></li>
-              <li><Link href="/#work" className="hover:text-brand-400 transition-colors">Selected Case Studies</Link></li>
-              <li><Link href="/#blog" className="hover:text-brand-400 transition-colors">Insights & Architecture</Link></li>
-              <li><Link href="/#about" className="hover:text-brand-400 transition-colors">Why Founders Choose Us</Link></li>
-              <li><Link href="/#contact" className="hover:text-brand-400 transition-colors">Start a Project</Link></li>
+          {/* Navigation Links */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-semibold text-[#F5F5F7] uppercase tracking-wider">Navigation</h4>
+            <ul className="space-y-2 text-sm text-[#9CA3B5]">
+              <li><Link href="/#services" className="hover:text-[#F5F5F7] transition-colors">Services</Link></li>
+              <li><Link href="/#work" className="hover:text-[#F5F5F7] transition-colors">Selected Work</Link></li>
+              <li><Link href="/#blog" className="hover:text-[#F5F5F7] transition-colors">Studio Journal</Link></li>
+              <li><Link href="/#about" className="hover:text-[#F5F5F7] transition-colors">Why Us</Link></li>
+              <li><Link href="/#contact" className="hover:text-[#F5F5F7] transition-colors">Contact</Link></li>
             </ul>
           </div>
 
-          {/* Contact / Portal */}
-          <div className="space-y-4">
-            <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Contact & Studio</h4>
-            <p className="text-sm text-slate-400">
+          {/* Studio Contact */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-semibold text-[#F5F5F7] uppercase tracking-wider">Studio</h4>
+            <p className="text-sm text-[#9CA3B5] leading-relaxed">
               hello@orbitly.studio<br />
-              San Francisco, CA & Remote Worldwide
+              San Francisco, CA & Remote
             </p>
             <div className="pt-2">
               <Link
@@ -66,12 +64,10 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
+        {/* Bottom Copyright */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} Orbitly Studio Inc. All rights reserved.</p>
-          <p className="flex items-center gap-4">
-            <span>Crafted with precision & modern engineering standards</span>
-          </p>
+          <p>© {new Date().getFullYear()} Orbitly Studio. All rights reserved.</p>
+          <p>Crafted with modern product engineering standards</p>
         </div>
       </div>
     </footer>

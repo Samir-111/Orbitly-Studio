@@ -1,29 +1,30 @@
 import React from 'react';
 import { Star, Quote } from 'lucide-react';
+import { ScrollReveal } from '../components/ScrollReveal';
 
 export const TestimonialsSection: React.FC = () => {
   const testimonials = [
     {
       quote:
-        'Orbitly Studio didn’t just build our telemedicine platform—they fundamentally reshaped how our clinical team interacts with patients. Our 62% reduction in onboarding drop-offs is directly attributable to their UX leadership.',
+        'Orbitly didn’t just write code—they helped us refine our product roadmap and cut 3 months of unnecessary features. The resulting MVP helped us secure our initial customer traction.',
       author: 'Dr. Aris Thorne',
-      role: 'Chief Medical Officer',
+      role: 'Co-Founder',
       company: 'Apex Health',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
       rating: 5,
     },
     {
       quote:
-        'Finding an agency that truly understands both high-frequency FinTech architecture and consumer-grade luxury design is nearly impossible. Orbitly delivered on every single milestone ahead of schedule.',
+        'Finding an engineering team that understands both complex backend systems and modern UX design is rare. Orbitly executed our trading dashboard with zero downtime.',
       author: 'Julian Vance',
       role: 'Founder & CEO',
-      company: 'NovaPay Global',
+      company: 'NovaPay',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
       rating: 5,
     },
     {
       quote:
-        'The design system and canvas workspace Orbitly architected for Luminary AI became the core differentiator that closed our $35M Series B round. Their engineering standards are second to none.',
+        'The design system and component architecture Orbitly built became the foundation for our entire frontend team. Fast, reliable, and thoughtful execution.',
       author: 'Maya Lin',
       role: 'Head of Product',
       company: 'Luminary Systems',
@@ -33,59 +34,60 @@ export const TestimonialsSection: React.FC = () => {
   ];
 
   return (
-    <section id="about" className="py-24 relative bg-[#080C15] border-t border-white/5">
+    <section id="about" className="py-24 relative section-radial-bg border-t border-[#20263A]/40">
       <div className="max-w-7xl mx-auto px-6 sm:px-8">
         {/* Section Header */}
-        <div className="max-w-2xl mb-16 space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-brand-500/10 border border-brand-500/20 text-xs font-semibold text-brand-400 uppercase tracking-wider">
-            Client Success & Proof
+        <ScrollReveal>
+          <div className="max-w-2xl mb-14 space-y-3">
+            <div className="text-xs font-semibold text-[#8B7CF6] uppercase tracking-wider">
+              Testimonials
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#F5F5F7] leading-tight">
+              Trusted by founders.
+            </h2>
+            <p className="text-base sm:text-lg text-[#9CA3B5]">
+              Real feedback from startup founders and product leaders we partner with.
+            </p>
           </div>
-          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
-            Trusted by founders building <span className="text-gradient-brand">the future.</span>
-          </h2>
-          <p className="text-base sm:text-lg text-slate-400">
-            Hear directly from the executive teams and technical leaders we partner with to build market-defining software.
-          </p>
-        </div>
+        </ScrollReveal>
 
-        {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((item) => (
-            <div
-              key={item.author}
-              className="glass-card rounded-2xl p-8 flex flex-col justify-between space-y-6 relative"
-            >
-              <Quote className="w-10 h-10 text-brand-500/20 absolute top-6 right-6" />
+        {/* Testimonials Grid with Staggered Scroll Reveal */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {testimonials.map((item, index) => (
+            <ScrollReveal key={item.author} delay={index * 100}>
+              <div className="glass-card rounded-2xl p-7 flex flex-col justify-between space-y-6 relative h-full hover:-translate-y-1">
+                <Quote className="w-8 h-8 text-brand-500/20 absolute top-6 right-6" />
 
-              <div className="space-y-4">
-                {/* Rating Stars */}
-                <div className="flex items-center gap-1">
-                  {[...Array(item.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-accent-amber text-accent-amber" />
-                  ))}
-                </div>
+                <div className="space-y-4">
+                  {/* Rating Stars */}
+                  <div className="flex items-center gap-1">
+                    {[...Array(item.rating)].map((_, i) => (
+                      <Star key={i} className="w-3.5 h-3.5 fill-[#F59E0B] text-[#F59E0B]" />
+                    ))}
+                  </div>
 
-                {/* Quote */}
-                <p className="text-slate-300 text-sm sm:text-base leading-relaxed italic">
-                  "{item.quote}"
-                </p>
-              </div>
-
-              {/* Author Info */}
-              <div className="pt-4 border-t border-white/5 flex items-center gap-3">
-                <img
-                  src={item.avatar}
-                  alt={item.author}
-                  className="w-11 h-11 rounded-full object-cover border border-brand-500/30"
-                />
-                <div>
-                  <h4 className="text-sm font-bold text-white">{item.author}</h4>
-                  <p className="text-xs text-slate-400">
-                    {item.role}, <span className="text-brand-400">{item.company}</span>
+                  {/* Quote */}
+                  <p className="text-[#F5F5F7] text-sm leading-relaxed font-normal">
+                    &ldquo;{item.quote}&rdquo;
                   </p>
                 </div>
+
+                {/* Author Info */}
+                <div className="pt-4 border-t border-[#20263A]/60 flex items-center gap-3">
+                  <img
+                    src={item.avatar}
+                    alt={item.author}
+                    className="w-10 h-10 rounded-full object-cover border border-[#20263A]"
+                  />
+                  <div>
+                    <h4 className="text-sm font-bold text-[#F5F5F7]">{item.author}</h4>
+                    <p className="text-xs text-[#9CA3B5]">
+                      {item.role}, <span className="text-[#8B7CF6]">{item.company}</span>
+                    </p>
+                  </div>
+                </div>
               </div>
-            </div>
+            </ScrollReveal>
           ))}
         </div>
       </div>

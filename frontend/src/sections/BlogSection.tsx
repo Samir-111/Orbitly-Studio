@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { BlogPost } from '../types';
 import { blogApi } from '../services/api';
 import { BlogCard } from '../components/BlogCard';
+import { ScrollReveal } from '../components/ScrollReveal';
 import { BookOpen, RefreshCw, AlertCircle } from 'lucide-react';
 
 export const BlogSection: React.FC = () => {
@@ -29,20 +30,22 @@ export const BlogSection: React.FC = () => {
   }, []);
 
   return (
-    <section id="blog" className="py-24 relative bg-[#090D17] border-t border-white/5">
+    <section id="blog" className="py-24 relative section-radial-bg border-t border-[#20263A]/40">
       <div className="max-w-7xl mx-auto px-6 sm:px-8">
         {/* Section Header */}
-        <div className="max-w-2xl mb-16 space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-brand-500/10 border border-brand-500/20 text-xs font-semibold text-brand-400 uppercase tracking-wider">
-            Insights & Architecture
+        <ScrollReveal>
+          <div className="max-w-2xl mb-14 space-y-3">
+            <div className="text-xs font-semibold text-[#8B7CF6] uppercase tracking-wider">
+              Studio Journal
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#F5F5F7] leading-tight">
+              Latest insights & thinking.
+            </h2>
+            <p className="text-base sm:text-lg text-[#9CA3B5]">
+              Thoughts on product design, modern software engineering, and startup scaling.
+            </p>
           </div>
-          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
-            Latest from our <span className="text-gradient">studio blog.</span>
-          </h2>
-          <p className="text-base sm:text-lg text-slate-400">
-            Deep dives into design systems, full-stack software architecture, and product strategy principles from Orbitly engineering leaders.
-          </p>
-        </div>
+        </ScrollReveal>
 
         {/* Loading State Skeleton */}
         {loading && (
@@ -67,9 +70,9 @@ export const BlogSection: React.FC = () => {
             <p className="text-slate-300 font-medium">{error}</p>
             <button
               onClick={fetchBlogPosts}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold bg-brand-600 text-white hover:bg-brand-500 transition-all"
+              className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-semibold bg-brand-500 text-white hover:bg-brand-600 transition-all"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="w-3.5 h-3.5" />
               <span>Retry Loading</span>
             </button>
           </div>
@@ -77,20 +80,22 @@ export const BlogSection: React.FC = () => {
 
         {/* Empty State */}
         {!loading && !error && posts.length === 0 && (
-          <div className="p-12 rounded-2xl glass-card text-center space-y-4 max-w-md mx-auto">
-            <BookOpen className="w-12 h-12 text-slate-500 mx-auto" />
-            <h3 className="text-lg font-bold text-white">No published articles yet</h3>
-            <p className="text-sm text-slate-400">
+          <div className="p-12 rounded-2xl glass-card text-center space-y-3 max-w-md mx-auto">
+            <BookOpen className="w-10 h-10 text-slate-500 mx-auto" />
+            <h3 className="text-base font-bold text-white">No published articles yet</h3>
+            <p className="text-xs text-slate-400">
               Check back soon for new studio engineering and design insights.
             </p>
           </div>
         )}
 
-        {/* Blog Cards Grid */}
+        {/* Blog Cards Grid with Staggered Scroll Reveal */}
         {!loading && !error && posts.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.slice(0, 6).map((post) => (
-              <BlogCard key={post._id} post={post} />
+            {posts.slice(0, 6).map((post, index) => (
+              <ScrollReveal key={post._id} delay={index * 80}>
+                <BlogCard post={post} />
+              </ScrollReveal>
             ))}
           </div>
         )}

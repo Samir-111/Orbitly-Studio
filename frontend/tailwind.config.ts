@@ -10,27 +10,27 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: '#090D16',
-        surface: '#111726',
-        'surface-elevated': '#182138',
-        'surface-border': '#222F4C',
+        background: '#080B14',
+        surface: '#0D1220',
+        'surface-elevated': '#131A2E',
+        'surface-border': '#20263A',
         brand: {
-          50: '#EEF2FF',
-          100: '#E0E7FF',
-          400: '#818CF8',
-          500: '#6366F1',
-          600: '#4F46E5',
-          700: '#4338CA',
+          50: '#F4F3FF',
+          100: '#EBE9FE',
+          400: '#8B7CF6',
+          500: '#6C5CE7',
+          600: '#5A48DE',
+          700: '#4834D4',
         },
         accent: {
-          cyan: '#06B6D4',
+          cyan: '#38BDF8',
           emerald: '#10B981',
           amber: '#F59E0B',
           rose: '#F43F5E',
-        }
+        },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        sans: ['Manrope', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },
     },
   },
