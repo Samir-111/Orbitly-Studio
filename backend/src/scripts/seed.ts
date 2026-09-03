@@ -1,12 +1,20 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
+import dns from 'dns';
 import { User } from '../models/User';
 import { Project } from '../models/Project';
 import { BlogPost } from '../models/BlogPost';
 import { Inquiry } from '../models/Inquiry';
 
 dotenv.config();
+
+// Ensure reliable DNS resolution for MongoDB Atlas SRV records
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch {
+  // Fallback to system default DNS if setServers is restricted
+}
 
 const seedDatabase = async () => {
   try {
