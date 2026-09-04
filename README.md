@@ -1,96 +1,56 @@
 # Orbitly Studio
 
-A full-stack web application built for **Orbitly Studio**, a fictional digital design and product studio that helps startups turn ideas into thoughtful, well-designed digital products.
+Orbitly Studio is a modern web application built for a digital product studio. It includes a public-facing agency website, dynamic portfolio case studies, a technical blog, an interactive client inquiry form with automated emails, and an easy-to-use admin panel for content management.
 
-The platform includes a modern public landing page, dynamic case studies, a technical blog, and a secure admin dashboard for managing projects and blog content.
+---
+
+## Features
+
+### 🌐 For Website Visitors
+- **Modern Dark UI:** Clean dark glassmorphism design with smooth animations and responsive layout.
+- **Projects & Case Studies:** Shows the top 6 projects on the home page with category filters and a **"View All"** button to view more.
+- **Blog / Insights:** Technical articles with a markdown reading view, read times, and an expandable list.
+- **Project Inquiry Form:** Visitors can send project requirements with custom budget options (INR).
+- **Automated Emails:**
+  - **Admin Alert:** Instant email notification to the studio admin whenever someone submits an inquiry.
+  - **Client Confirmation:** Confirmation email sent back to the client acknowledging their message.
+
+### 🔒 For Studio Admins (`/admin`)
+- **Secure Login:** JWT-based authentication for administrative access.
+- **Project Management:** Add, edit, delete, and publish portfolio case studies.
+- **Blog Studio:** Built-in Markdown editor with live preview to write and format articles.
+- **Image Uploads (Cloudinary):** Upload images directly from your computer or paste an external image link.
+- **Inquiry Tracker:** Review all incoming client messages in one clean dashboard.
+- **Studio Settings:** Easily update the studio email and location displayed on the website.
 
 ---
 
 ## Tech Stack
 
-- **Frontend:** Next.js 14, React 18, TypeScript, Tailwind CSS, Lucide Icons
-- **Backend:** Node.js, Express.js, TypeScript, Mongoose
+- **Frontend:** Next.js, React, TypeScript, Tailwind CSS, Lucide Icons
+- **Backend:** Node.js, Express, TypeScript, Mongoose
 - **Database:** MongoDB
-- **Authentication:** JWT, bcryptjs
-- **Validation:** Zod
-- **Security:** express-rate-limit
-- **Content:** Markdown Editor
+- **Image Storage:** Cloudinary
+- **Emails:** Resend API
+- **Auth & Security:** JWT, bcryptjs, Zod validation, Rate limiting
 
 ---
 
-## System Workflow
+## Running Locally
 
-```text
-                         ┌────────────────────┐
-                         │   Public Visitor   │
-                         └─────────┬──────────┘
-                                   │
-                                   ▼
-                         ┌────────────────────┐
-                         │ Next.js Frontend   │
-                         └─────────┬──────────┘
-                                   │
-                    ┌──────────────┼──────────────┐
-                    │              │              │
-                    ▼              ▼              ▼
-               Projects          Blog        Contact / CTA
-                    │              │
-                    └───────┬──────┘
-                            ▼
-                    ┌──────────────────┐
-                    │ Express REST API │
-                    └────────┬─────────┘
-                             │
-                             ▼
-                    ┌──────────────────┐
-                    │     MongoDB      │
-                    └──────────────────┘
+### 1. Prerequisites
+- Node.js (v18+)
+- MongoDB (local or MongoDB Atlas URL)
 
-
-                         ┌────────────────────┐
-                         │   Studio Admin     │
-                         └─────────┬──────────┘
-                                   │
-                                   ▼
-                         ┌────────────────────┐
-                         │    Admin Login     │
-                         └─────────┬──────────┘
-                                   │
-                                   ▼
-                         ┌────────────────────┐
-                         │ JWT + Admin Role   │
-                         └─────────┬──────────┘
-                                   │
-                                   ▼
-                         ┌────────────────────┐
-                         │  Admin Dashboard   │
-                         └─────────┬──────────┘
-                                   │
-                    ┌──────────────┼──────────────┐
-                    │              │              │
-                    ▼              ▼              ▼
-               Projects          Blog       Content Status
-               CRUD              CRUD       Publish / Draft
-```
-
-### How Data Flows:
-1. **Public Browsing:** Frontend fetches live data from backend APIs (`GET /api/projects`, `GET /api/blog`). The backend queries MongoDB with `{ isPublished: true }`, ensuring draft content stays completely private.
-2. **Client Inquiries:** When a prospective client submits a project brief on the landing page, data is validated through Zod and stored in MongoDB.
-3. **Admin Management:** Admin logs in using email/password. The backend issues a signed JWT token verifying `admin` role. The admin can then create/update case studies, write markdown blogs, and manage client leads.
-
----
-
-## How to Run Locally
-
-### 1. Start Backend
+### 2. Backend Setup
 ```bash
 cd backend
 npm install
-npm run seed    # Seeds admin user & sample projects/blogs
+npm run seed    # Creates sample projects, blogs & default admin account
 npm run dev     # Runs on http://localhost:5000
 ```
 
-### 2. Start Frontend
+### 3. Frontend Setup
 ```bash
 cd frontend
 npm install
@@ -99,41 +59,54 @@ npm run dev     # Runs on http://localhost:3000
 
 ---
 
-## Demo Admin Credentials
+## Admin Login Details
 
-- **Login URL:** `http://localhost:3000/admin/login`
+You can log in to the admin dashboard at:
+- **URL:** `http://localhost:3000/admin/login`
 - **Email:** `admin@orbitly.studio`
 - **Password:** `OrbitlyAdmin2025!`
 
 ---
 
-## What’s Inside
+## Environment Variables
 
-### 🌐 Public Website (`http://localhost:3000`)
-- **Hero & Services:** Studio introduction and capability cards.
-- **Projects / Case Studies:** Dynamic projects fetched from MongoDB with tags and detail pages (`/projects/[slug]`).
-- **Blog:** Dynamic articles with featured posts and markdown reading view (`/blog/[slug]`).
-- **Contact Form:** Interactive project inquiry form that saves client requirements directly to the database.
+### Backend (`backend/.env`)
+```env
+PORT=5000
+NODE_ENV=development
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+CORS_ORIGIN=http://localhost:3000
 
-### 🔒 Admin Dashboard (`http://localhost:3000/admin/dashboard`)
-- **Projects CRUD:** Create, edit, delete, and toggle draft/published status.
-- **Blog CRUD:** Markdown editor with live preview, featured story toggle, and publish controls.
-- **Client Inquiries:** View customer requirements submitted through the website with status management and direct email reply.
+# Cloudinary (Image uploads)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 
----
-
-## Architecture Highlights (Interview Quick-Notes)
-
-- **JWT + Role-Based Auth:** Admin routes verify the JWT token signature and ensure `role === 'admin'`.
-- **Draft Protection:** Public endpoints only return items where `isPublished: true`. Drafts return `404` to public visitors.
-- **Validation:** All write operations are validated using Zod schemas before touching MongoDB.
-- **Rate Limiting:** Protects the login endpoint and write operations from abuse.
-
----
-
-## Build Verification
-
-```bash
-cd backend && npm run build
-cd frontend && npm run build
+# Resend (Email notifications)
+RESEND_API_KEY=your_resend_api_key
+RESEND_FROM_EMAIL=Orbitly Studio <onboarding@resend.dev>
+ADMIN_NOTIFICATION_EMAIL=your_email@gmail.com
 ```
+
+### Frontend (`frontend/.env.local`)
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+```
+
+---
+
+## Deploying to Production
+
+- **Backend (Render):**
+  1. Create a Web Service connected to this repository.
+  2. Set Root Directory to `backend`.
+  3. Build Command: `npm install && npm run build`
+  4. Start Command: `npm start`
+  5. Add the backend environment variables listed above.
+
+- **Frontend (Vercel):**
+  1. Import the repository in Vercel.
+  2. Set Root Directory to `frontend`.
+  3. Add `NEXT_PUBLIC_API_URL` pointing to your deployed backend URL (e.g. `https://your-backend.onrender.com/api`).
+  4. Click Deploy.
