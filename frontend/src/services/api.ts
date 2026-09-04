@@ -254,3 +254,55 @@ export const settingsApi = {
     });
   },
 };
+
+// ==========================================
+// Image Upload API Services (Multer -> Cloudinary)
+// ==========================================
+export interface UploadedImageData {
+  url: string;
+  publicId: string;
+  fileName: string;
+  size: number;
+  mimeType: string;
+}
+
+export const uploadApi = {
+  // Admin: Upload an image file (JPG, PNG, WebP <= 5MB)
+  uploadImage: async (file: File): Promise<ApiResponse<UploadedImageData>> => {
+    const token = getAdminToken();
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_URL}/upload`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      const errorMessage =
+        data.message ||
+        (data.errors && data.errors.map((e: any) => e.message).join(', ')) ||
+        'Failed to upload image.';
+      throw new Error(errorMessage);
+    }
+
+    return data;
+  },
+
+  // Admin: Delete an image from Cloudinary
+  deleteImage: async (publicId: string): Promise<ApiResponse<null>> => {
+    return fetchClient<ApiResponse<null>>('/upload', {
+      method: 'DELETE',
+      body: JSON.stringify({ publicId }),
+    });
+  },
+};
+

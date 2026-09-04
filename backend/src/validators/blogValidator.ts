@@ -13,6 +13,7 @@ export const createBlogSchema = z.object({
   thumbnail: z
     .string({ required_error: 'Thumbnail URL is required' })
     .url('Thumbnail must be a valid URL'),
+  thumbnailPublicId: z.string().optional().nullable(),
   excerpt: z
     .string({ required_error: 'Excerpt summary is required' })
     .min(10, 'Excerpt must be at least 10 characters')

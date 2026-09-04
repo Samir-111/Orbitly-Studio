@@ -13,6 +13,7 @@ export const createProjectSchema = z.object({
   thumbnail: z
     .string({ required_error: 'Thumbnail URL is required' })
     .url('Thumbnail must be a valid URL'),
+  thumbnailPublicId: z.string().optional().nullable(),
   shortDescription: z
     .string({ required_error: 'Short description is required' })
     .min(10, 'Short description must be at least 10 characters')

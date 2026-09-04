@@ -5,6 +5,7 @@ export interface IBlogPost extends Document {
   title: string;
   slug: string;
   thumbnail: string;
+  thumbnailPublicId?: string;
   excerpt: string;
   content: string;
   author: string;
@@ -34,6 +35,10 @@ const blogPostSchema = new Schema<IBlogPost>(
     thumbnail: {
       type: String,
       required: [true, 'Thumbnail image URL is required'],
+    },
+    thumbnailPublicId: {
+      type: String,
+      default: null,
     },
     excerpt: {
       type: String,

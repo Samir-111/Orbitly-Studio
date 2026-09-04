@@ -6,6 +6,7 @@ export interface Project {
   title: string;
   slug: string;
   thumbnail: string;
+  thumbnailPublicId?: string;
   shortDescription: string;
   description: string;
   tags: string[];
@@ -26,6 +27,7 @@ export interface BlogPost {
   title: string;
   slug: string;
   thumbnail: string;
+  thumbnailPublicId?: string;
   excerpt: string;
   content: string;
   author: string;

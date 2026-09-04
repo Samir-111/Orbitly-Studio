@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { BlogPost } from '../models/BlogPost';
 import { AuthRequest } from '../middleware/authMiddleware';
+import { deleteFromCloudinary } from '../config/cloudinary';
 
 // Helper to check if a request has a valid admin JWT
 const isRequestAdmin = (req: Request): boolean => {
@@ -119,8 +120,17 @@ export const updateBlogPost = async (
   try {
     const { id } = req.params;
 
+    const existingPost = await BlogPost.findById(id);
+    if (!existingPost) {
+      res.status(404).json({
+        success: false,
+        message: 'Blog post not found.',
+      });
+      return;
+    }
+
     // Check for slug collision with other posts
-    if (req.body.slug) {
+    if (req.body.slug && req.body.slug !== existingPost.slug) {
       const slugConflict = await BlogPost.findOne({
         slug: req.body.slug,
         _id: { $ne: id },
@@ -134,18 +144,19 @@ export const updateBlogPost = async (
       }
     }
 
+    // If thumbnail or thumbnailPublicId changed, safely remove old Cloudinary asset
+    if (
+      req.body.thumbnail &&
+      existingPost.thumbnailPublicId &&
+      existingPost.thumbnailPublicId !== req.body.thumbnailPublicId
+    ) {
+      deleteFromCloudinary(existingPost.thumbnailPublicId);
+    }
+
     const post = await BlogPost.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true,
     });
-
-    if (!post) {
-      res.status(404).json({
-        success: false,
-        message: 'Blog post not found.',
-      });
-      return;
-    }
 
     res.status(200).json({
       success: true,
@@ -174,6 +185,11 @@ export const deleteBlogPost = async (
         message: 'Blog post not found.',
       });
       return;
+    }
+
+    // Safely delete associated Cloudinary thumbnail if exists
+    if (post.thumbnailPublicId) {
+      deleteFromCloudinary(post.thumbnailPublicId);
     }
 
     res.status(200).json({

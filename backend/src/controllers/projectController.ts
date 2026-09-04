@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { Project } from '../models/Project';
 import { AuthRequest } from '../middleware/authMiddleware';
+import { deleteFromCloudinary } from '../config/cloudinary';
 
 // Helper to check if a request has a valid admin JWT
 const isRequestAdmin = (req: Request): boolean => {
@@ -118,8 +119,17 @@ export const updateProject = async (
   try {
     const { id } = req.params;
 
+    const existingProject = await Project.findById(id);
+    if (!existingProject) {
+      res.status(404).json({
+        success: false,
+        message: 'Project not found.',
+      });
+      return;
+    }
+
     // Check if slug is changing and already in use by another project
-    if (req.body.slug) {
+    if (req.body.slug && req.body.slug !== existingProject.slug) {
       const slugConflict = await Project.findOne({
         slug: req.body.slug,
         _id: { $ne: id },
@@ -133,18 +143,19 @@ export const updateProject = async (
       }
     }
 
+    // If thumbnail or thumbnailPublicId changed, safely remove old Cloudinary asset
+    if (
+      req.body.thumbnail &&
+      existingProject.thumbnailPublicId &&
+      existingProject.thumbnailPublicId !== req.body.thumbnailPublicId
+    ) {
+      deleteFromCloudinary(existingProject.thumbnailPublicId);
+    }
+
     const project = await Project.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true,
     });
-
-    if (!project) {
-      res.status(404).json({
-        success: false,
-        message: 'Project not found.',
-      });
-      return;
-    }
 
     res.status(200).json({
       success: true,
@@ -173,6 +184,11 @@ export const deleteProject = async (
         message: 'Project not found.',
       });
       return;
+    }
+
+    // Safely delete associated Cloudinary thumbnail if exists
+    if (project.thumbnailPublicId) {
+      deleteFromCloudinary(project.thumbnailPublicId);
     }
 
     res.status(200).json({

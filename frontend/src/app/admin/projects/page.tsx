@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AdminSidebar } from '../../../components/AdminSidebar';
+import { ImageSelector } from '../../../components/ImageSelector';
 import { projectsApi, getAdminToken } from '../../../services/api';
 import { Project } from '../../../types';
 import {
@@ -41,6 +42,7 @@ export default function AdminProjectsPage() {
     title: '',
     slug: '',
     thumbnail: '',
+    thumbnailPublicId: '',
     shortDescription: '',
     description: '',
     tagsString: '',
@@ -81,6 +83,7 @@ export default function AdminProjectsPage() {
       title: '',
       slug: '',
       thumbnail: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
+      thumbnailPublicId: '',
       shortDescription: '',
       description: '',
       tagsString: 'UI/UX Design, Web Development',
@@ -103,6 +106,7 @@ export default function AdminProjectsPage() {
       title: project.title,
       slug: project.slug,
       thumbnail: project.thumbnail,
+      thumbnailPublicId: project.thumbnailPublicId || '',
       shortDescription: project.shortDescription,
       description: project.description,
       tagsString: project.tags?.join(', ') || '',
@@ -136,10 +140,16 @@ export default function AdminProjectsPage() {
     try {
       setErrorMessage(null);
 
+      if (!formData.thumbnail || formData.thumbnail.trim() === '') {
+        setErrorMessage('Please upload an image or provide a valid image URL.');
+        return;
+      }
+
       const payload: Partial<Project> = {
         title: formData.title,
         slug: formData.slug,
         thumbnail: formData.thumbnail,
+        thumbnailPublicId: formData.thumbnailPublicId || undefined,
         shortDescription: formData.shortDescription,
         description: formData.description,
         tags: formData.tagsString.split(',').map((t) => t.trim()).filter(Boolean),
@@ -441,16 +451,31 @@ export default function AdminProjectsPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {/* Thumbnail URL */}
-                  <div className="sm:col-span-2 space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-300">Thumbnail Image URL *</label>
+                {/* Thumbnail Image Selection (Upload vs URL) */}
+                <ImageSelector
+                  label="Project Thumbnail Image"
+                  value={formData.thumbnail}
+                  publicId={formData.thumbnailPublicId}
+                  onChange={(url, publicId) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      thumbnail: url,
+                      thumbnailPublicId: publicId || '',
+                    }))
+                  }
+                  required
+                  helpText="Upload a portfolio cover image (JPG, PNG, WebP <= 5MB) or paste an external image URL."
+                />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Client */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300">Client / Company Name</label>
                     <input
-                      type="url"
-                      required
-                      value={formData.thumbnail}
-                      onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
-                      placeholder="https://images.unsplash.com/..."
+                      type="text"
+                      value={formData.client}
+                      onChange={(e) => setFormData({ ...formData, client: e.target.value })}
+                      placeholder="e.g. Apex Health Technologies"
                       className="w-full bg-surface border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500"
                     />
                   </div>
@@ -468,30 +493,16 @@ export default function AdminProjectsPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Client */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-300">Client / Company Name</label>
-                    <input
-                      type="text"
-                      value={formData.client}
-                      onChange={(e) => setFormData({ ...formData, client: e.target.value })}
-                      placeholder="e.g. Apex Health Technologies"
-                      className="w-full bg-surface border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500"
-                    />
-                  </div>
-
-                  {/* Tags */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-300">Tags (comma separated)</label>
-                    <input
-                      type="text"
-                      value={formData.tagsString}
-                      onChange={(e) => setFormData({ ...formData, tagsString: e.target.value })}
-                      placeholder="UI/UX Design, Web Development, Mobile App"
-                      className="w-full bg-surface border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500"
-                    />
-                  </div>
+                {/* Tags */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-300">Tags (comma separated)</label>
+                  <input
+                    type="text"
+                    value={formData.tagsString}
+                    onChange={(e) => setFormData({ ...formData, tagsString: e.target.value })}
+                    placeholder="UI/UX Design, Web Development, Mobile App"
+                    className="w-full bg-surface border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500"
+                  />
                 </div>
 
                 {/* Short Description */}

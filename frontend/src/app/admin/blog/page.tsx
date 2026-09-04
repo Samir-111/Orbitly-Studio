@@ -4,10 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AdminSidebar } from '../../../components/AdminSidebar';
+import { ImageSelector } from '../../../components/ImageSelector';
 import { MarkdownEditor } from '../../../components/MarkdownEditor';
 import { blogApi, getAdminToken } from '../../../services/api';
 import { BlogPost } from '../../../types';
 import {
+  BookOpen,
   FileText,
   Plus,
   Search,
@@ -16,15 +18,15 @@ import {
   CheckCircle2,
   XCircle,
   ExternalLink,
-  AlertCircle,
+  Star,
   Sparkles,
+  AlertCircle,
   X,
-  Clock,
 } from 'lucide-react';
 
 /**
- * Admin Editorial Blog Articles Page
- * Handles CRUD operations for studio publication articles and journals.
+ * Admin Blog Articles & Insights Management Page
+ * Handles CRUD operations for studio insights and case study breakdowns.
  */
 export default function AdminBlogPage() {
   const router = useRouter();
@@ -44,6 +46,7 @@ export default function AdminBlogPage() {
     title: '',
     slug: '',
     thumbnail: '',
+    thumbnailPublicId: '',
     excerpt: '',
     content: '',
     author: 'Orbitly Studio Team',
@@ -81,6 +84,7 @@ export default function AdminBlogPage() {
       title: '',
       slug: '',
       thumbnail: 'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&w=1200&q=80',
+      thumbnailPublicId: '',
       excerpt: '',
       content: `## Section Heading\n\nWrite your insightful article here using markdown formatting.\n\n### Key Takeaways\n- Point 1\n- Point 2`,
       author: 'Orbitly Studio Team',
@@ -100,6 +104,7 @@ export default function AdminBlogPage() {
       title: post.title,
       slug: post.slug,
       thumbnail: post.thumbnail,
+      thumbnailPublicId: post.thumbnailPublicId || '',
       excerpt: post.excerpt,
       content: post.content,
       author: post.author || 'Orbitly Studio Team',
@@ -130,10 +135,16 @@ export default function AdminBlogPage() {
     try {
       setErrorMessage(null);
 
+      if (!formData.thumbnail || formData.thumbnail.trim() === '') {
+        setErrorMessage('Please upload an image or provide a valid image URL.');
+        return;
+      }
+
       const payload: Partial<BlogPost> = {
         title: formData.title,
         slug: formData.slug,
         thumbnail: formData.thumbnail,
+        thumbnailPublicId: formData.thumbnailPublicId || undefined,
         excerpt: formData.excerpt,
         content: formData.content,
         author: formData.author,
@@ -447,16 +458,31 @@ export default function AdminBlogPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {/* Thumbnail URL */}
-                  <div className="sm:col-span-2 space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-300">Thumbnail Image URL *</label>
+                {/* Thumbnail Image Selection (Upload vs URL) */}
+                <ImageSelector
+                  label="Article Thumbnail Image"
+                  value={formData.thumbnail}
+                  publicId={formData.thumbnailPublicId}
+                  onChange={(url, publicId) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      thumbnail: url,
+                      thumbnailPublicId: publicId || '',
+                    }))
+                  }
+                  required
+                  helpText="Upload an editorial article cover (JPG, PNG, WebP <= 5MB) or enter a direct image URL."
+                />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Author */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300">Author Name</label>
                     <input
-                      type="url"
-                      required
-                      value={formData.thumbnail}
-                      onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
-                      placeholder="https://images.unsplash.com/..."
+                      type="text"
+                      value={formData.author}
+                      onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                      placeholder="Sarah Chen, Head of Design"
                       className="w-full bg-surface border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500"
                     />
                   </div>
@@ -474,30 +500,16 @@ export default function AdminBlogPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Author */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-300">Author Name</label>
-                    <input
-                      type="text"
-                      value={formData.author}
-                      onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                      placeholder="Sarah Chen, Head of Design"
-                      className="w-full bg-surface border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500"
-                    />
-                  </div>
-
-                  {/* Tags */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-300">Tags (comma separated)</label>
-                    <input
-                      type="text"
-                      value={formData.tagsString}
-                      onChange={(e) => setFormData({ ...formData, tagsString: e.target.value })}
-                      placeholder="Design Systems, Engineering, Frontend"
-                      className="w-full bg-surface border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500"
-                    />
-                  </div>
+                {/* Tags */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-300">Tags (comma separated)</label>
+                  <input
+                    type="text"
+                    value={formData.tagsString}
+                    onChange={(e) => setFormData({ ...formData, tagsString: e.target.value })}
+                    placeholder="Design Systems, Engineering, Frontend"
+                    className="w-full bg-surface border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500"
+                  />
                 </div>
 
                 {/* Excerpt */}

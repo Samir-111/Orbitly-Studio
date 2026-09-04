@@ -5,6 +5,7 @@ export interface IProject extends Document {
   title: string;
   slug: string;
   thumbnail: string;
+  thumbnailPublicId?: string;
   shortDescription: string;
   description: string;
   tags: string[];
@@ -37,6 +38,10 @@ const projectSchema = new Schema<IProject>(
     thumbnail: {
       type: String,
       required: [true, 'Project thumbnail image URL is required'],
+    },
+    thumbnailPublicId: {
+      type: String,
+      default: null,
     },
     shortDescription: {
       type: String,
