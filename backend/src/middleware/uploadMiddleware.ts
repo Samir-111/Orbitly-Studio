@@ -1,4 +1,4 @@
-import multer from 'multer';
+import multer, { FileFilterCallback } from 'multer';
 import { Request, Response, NextFunction } from 'express';
 
 // Configure multer with memory storage (no temporary files saved on disk)
@@ -11,7 +11,7 @@ const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 const fileFilter = (
   req: Request,
   file: Express.Multer.File,
-  callback: multer.FileFilterCallback
+  callback: FileFilterCallback
 ) => {
   if (ALLOWED_MIME_TYPES.includes(file.mimetype)) {
     callback(null, true);

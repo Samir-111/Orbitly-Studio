@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-//“We use Zod to validate incoming API request data and prevent invalid data from reaching our business logic or database.”
 // Interface extending Express Request to attach authenticated user payload
 export interface AuthRequest extends Request {
   user?: {
@@ -9,6 +8,7 @@ export interface AuthRequest extends Request {
     email: string;
     role: string;
   };
+  file?: Express.Multer.File;
 }
 
 interface JwtPayload {
