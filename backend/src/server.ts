@@ -6,6 +6,7 @@ import authRoutes from './routes/authRoutes';
 import projectRoutes from './routes/projectRoutes';
 import blogRoutes from './routes/blogRoutes';
 import inquiryRoutes from './routes/inquiryRoutes';
+import settingsRoutes from './routes/settingsRoutes';
 import { notFoundHandler, globalErrorHandler } from './middleware/errorHandler';
 import { generalRateLimiter } from './middleware/rateLimiter';
 
@@ -59,6 +60,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/blog', blogRoutes);
 app.use('/api/inquiries', inquiryRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // Catch-all 404 handler for unrecognized routes
 app.use(notFoundHandler);

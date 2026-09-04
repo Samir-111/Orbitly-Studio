@@ -58,6 +58,13 @@ export interface AdminUser {
   role: 'admin' | 'user';
 }
 
+// Studio Contact Information Settings
+export interface StudioSettings {
+  studioEmail: string;
+  location: string;
+  updatedAt?: string;
+}
+
 // Authentication response returned upon login
 export interface AuthResponse {
   success: boolean;

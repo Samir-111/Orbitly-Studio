@@ -6,6 +6,7 @@ import { User } from '../models/User';
 import { Project } from '../models/Project';
 import { BlogPost } from '../models/BlogPost';
 import { Inquiry } from '../models/Inquiry';
+import { Settings } from '../models/Settings';
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ const seedDatabase = async () => {
     await Project.deleteMany({});
     await BlogPost.deleteMany({});
     await Inquiry.deleteMany({});
+    await Settings.deleteMany({});
 
     console.log('[Seed] Creating default admin user...');
     const salt = await bcrypt.genSalt(10);
@@ -339,6 +341,13 @@ This draft post verifies that unpublished articles are strictly excluded from pu
 
     await Inquiry.insertMany(inquiries);
     console.log(`[Seed] Seeded ${inquiries.length} sample client inquiries.`);
+
+    console.log('[Seed] Seeding initial studio contact settings...');
+    await Settings.create({
+      studioEmail: 'hello@orbitly.studio',
+      location: 'San Francisco, CA & Remote Worldwide',
+    });
+    console.log('[Seed] Seeded initial studio contact settings.');
 
     console.log('==============================================');
     console.log('🎉 Database seeding completed successfully!');

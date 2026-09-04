@@ -1,4 +1,6 @@
-import { Project, BlogPost, Inquiry, AuthResponse, ApiResponse, AdminUser } from '../types';
+import { Project, BlogPost, Inquiry, AuthResponse, ApiResponse, AdminUser, StudioSettings } from '../types';
+
+export type { StudioSettings };
 
 // Base API URL from environment variable with smart /api normalization
 const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
@@ -226,6 +228,29 @@ export const inquiriesApi = {
   delete: async (id: string): Promise<ApiResponse<null>> => {
     return fetchClient<ApiResponse<null>>(`/inquiries/${id}`, {
       method: 'DELETE',
+    });
+  },
+};
+
+// ==========================================
+// Studio Settings API Services
+// ==========================================
+export const settingsApi = {
+  // Public / Admin: Get studio contact settings
+  get: async (): Promise<ApiResponse<StudioSettings>> => {
+    return fetchClient<ApiResponse<StudioSettings>>('/settings', {
+      cache: 'no-store',
+    });
+  },
+
+  // Admin: Update studio contact settings
+  update: async (payload: {
+    studioEmail: string;
+    location: string;
+  }): Promise<ApiResponse<StudioSettings>> => {
+    return fetchClient<ApiResponse<StudioSettings>>('/settings', {
+      method: 'PUT',
+      body: JSON.stringify(payload),
     });
   },
 };

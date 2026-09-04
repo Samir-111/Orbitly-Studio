@@ -1,8 +1,32 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Sparkles, Github, Twitter, Linkedin, ArrowUpRight } from 'lucide-react';
+import { settingsApi, StudioSettings } from '../services/api';
 
 export const Footer: React.FC = () => {
+  const [settings, setSettings] = useState<StudioSettings>({
+    studioEmail: 'hello@orbitly.studio',
+    location: 'San Francisco, CA & Remote Worldwide',
+  });
+
+  useEffect(() => {
+    settingsApi
+      .get()
+      .then((res) => {
+        if (res?.data) {
+          setSettings({
+            studioEmail: res.data.studioEmail || 'hello@orbitly.studio',
+            location: res.data.location || 'San Francisco, CA & Remote Worldwide',
+          });
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to load footer settings:', err);
+      });
+  }, []);
+
   return (
     <footer className="bg-[#05070D] border-t border-[#20263A] pt-16 pb-12">
       <div className="max-w-7xl mx-auto px-6 sm:px-8">
@@ -49,8 +73,10 @@ export const Footer: React.FC = () => {
           <div className="space-y-3">
             <h4 className="text-xs font-semibold text-[#F5F5F7] uppercase tracking-wider">Studio</h4>
             <p className="text-sm text-[#9CA3B5] leading-relaxed">
-              hello@orbitly.studio<br />
-              San Francisco, CA & Remote
+              <a href={`mailto:${settings.studioEmail}`} className="hover:text-[#F5F5F7] transition-colors block">
+                {settings.studioEmail}
+              </a>
+              <span>{settings.location}</span>
             </p>
             <div className="pt-2">
               <Link

@@ -101,3 +101,16 @@ select:focus-visible {
   outline: 2px solid #8B7CF6;
   outline-offset: 2px;
 }
+
+/* Ensure native select popups match dark theme */
+select {
+  color-scheme: dark;
+  background-color: #0D1220;
+  color: #F5F5F7;
+}
+
+select option {
+  background-color: #0D1220;
+  color: #F5F5F7;
+}
+

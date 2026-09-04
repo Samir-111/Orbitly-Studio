@@ -19,6 +19,10 @@ import {
   X,
 } from 'lucide-react';
 
+/**
+ * Admin Projects & Case Studies Management Page
+ * Handles CRUD operations for studio portfolio case studies.
+ */
 export default function AdminProjectsPage() {
   const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
@@ -203,7 +207,7 @@ export default function AdminProjectsPage() {
     <div className="min-h-screen bg-[#060911] text-slate-100 flex flex-col md:flex-row">
       <AdminSidebar />
 
-      <main className="flex-1 p-6 sm:p-10 overflow-y-auto">
+      <main className="flex-1 p-6 sm:p-10 min-w-0">
         <div className="max-w-6xl mx-auto space-y-6">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/5">

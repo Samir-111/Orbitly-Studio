@@ -1,11 +1,35 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, MapPin, Send, CheckCircle2, AlertCircle } from 'lucide-react';
-import { inquiriesApi } from '../services/api';
+import { inquiriesApi, settingsApi, StudioSettings } from '../services/api';
 import { ScrollReveal } from '../components/ScrollReveal';
+import { DarkSelect, Option } from '../components/DarkSelect';
+
+const SERVICE_OPTIONS: Option[] = [
+  { value: 'Product Strategy', label: 'Product Strategy' },
+  { value: 'UI/UX Design', label: 'UI/UX Design' },
+  { value: 'Full-Stack Development', label: 'Full-Stack Development' },
+  { value: 'Mobile App', label: 'Mobile App (iOS/Android)' },
+  { value: 'Brand Identity', label: 'Brand Identity' },
+  { value: 'custom', label: 'Other / Custom Requirement (Type your own)' },
+];
+
+const BUDGET_OPTIONS: Option[] = [
+  { value: '₹10,000 – ₹20,000', label: '₹10,000 – ₹20,000' },
+  { value: '₹20,000 – ₹25,000', label: '₹20,000 – ₹25,000' },
+  { value: '₹25,000 – ₹30,000', label: '₹25,000 – ₹30,000' },
+  { value: '₹30,000 – ₹35,000', label: '₹30,000 – ₹35,000' },
+  { value: '₹35,000 – ₹50,000', label: '₹35,000 – ₹50,000' },
+  { value: '₹50,000 – ₹1,00,000', label: '₹50,000 – ₹1,00,000' },
+  { value: 'custom', label: 'Custom Price (Enter your own budget)' },
+];
 
 export const ContactSection: React.FC = () => {
+  const [studioSettings, setStudioSettings] = useState<StudioSettings>({
+    studioEmail: 'hello@orbitly.studio',
+    location: 'San Francisco, CA & Remote Worldwide',
+  });
   const [serviceOption, setServiceOption] = useState('');
   const [customService, setCustomService] = useState('');
   const [budgetOption, setBudgetOption] = useState('');
@@ -21,6 +45,22 @@ export const ContactSection: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    settingsApi
+      .get()
+      .then((res) => {
+        if (res?.data) {
+          setStudioSettings({
+            studioEmail: res.data.studioEmail || 'hello@orbitly.studio',
+            location: res.data.location || 'San Francisco, CA & Remote Worldwide',
+          });
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to load studio settings:', err);
+      });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,7 +150,12 @@ export const ContactSection: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-xs text-[#9CA3B5]">Direct Studio Email</p>
-                    <p className="text-sm font-semibold text-[#F5F5F7]">hello@orbitly.studio</p>
+                    <a
+                      href={`mailto:${studioSettings.studioEmail}`}
+                      className="text-sm font-semibold text-[#F5F5F7] hover:text-[#8B7CF6] transition-colors"
+                    >
+                      {studioSettings.studioEmail}
+                    </a>
                   </div>
                 </div>
 
@@ -120,7 +165,7 @@ export const ContactSection: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-xs text-[#9CA3B5]">Location</p>
-                    <p className="text-sm font-semibold text-[#F5F5F7]">San Francisco, CA & Remote Worldwide</p>
+                    <p className="text-sm font-semibold text-[#F5F5F7]">{studioSettings.location}</p>
                   </div>
                 </div>
               </div>
@@ -209,11 +254,12 @@ export const ContactSection: React.FC = () => {
                         <label className="text-xs font-semibold uppercase tracking-wider text-[#9CA3B5]">
                           Primary Need *
                         </label>
-                        <select
+                        <DarkSelect
                           required
                           value={serviceOption}
-                          onChange={(e) => {
-                            const val = e.target.value;
+                          options={SERVICE_OPTIONS}
+                          placeholder="Select Primary Need..."
+                          onChange={(val) => {
                             setServiceOption(val);
                             if (val !== 'custom') {
                               setFormData({ ...formData, service: val });
@@ -221,19 +267,7 @@ export const ContactSection: React.FC = () => {
                               setFormData({ ...formData, service: customService.trim() });
                             }
                           }}
-                          className={`w-full bg-surface-elevated border border-[#20263A] rounded-xl px-4 py-2.5 text-sm ${serviceOption ? 'text-[#F5F5F7]' : 'text-slate-400'
-                            } focus:outline-none focus:border-brand-500 transition-colors`}
-                        >
-                          <option value="" disabled>
-                            Select Primary Need...
-                          </option>
-                          <option value="Product Strategy">Product Strategy</option>
-                          <option value="UI/UX Design">UI/UX Design</option>
-                          <option value="Full-Stack Development">Full-Stack Development</option>
-                          <option value="Mobile App">Mobile App (iOS/Android)</option>
-                          <option value="Brand Identity">Brand Identity</option>
-                          <option value="custom">Other / Custom Requirement (Type your own)</option>
-                        </select>
+                        />
                       </div>
 
                       {/* Budget */}
@@ -241,11 +275,12 @@ export const ContactSection: React.FC = () => {
                         <label className="text-xs font-semibold uppercase tracking-wider text-[#9CA3B5]">
                           Estimated Budget (INR) *
                         </label>
-                        <select
+                        <DarkSelect
                           required
                           value={budgetOption}
-                          onChange={(e) => {
-                            const val = e.target.value;
+                          options={BUDGET_OPTIONS}
+                          placeholder="Select Budget Range..."
+                          onChange={(val) => {
                             setBudgetOption(val);
                             if (val !== 'custom') {
                               setFormData({ ...formData, budget: val });
@@ -257,20 +292,7 @@ export const ContactSection: React.FC = () => {
                               });
                             }
                           }}
-                          className={`w-full bg-surface-elevated border border-[#20263A] rounded-xl px-4 py-2.5 text-sm ${budgetOption ? 'text-[#F5F5F7]' : 'text-slate-400'
-                            } focus:outline-none focus:border-brand-500 transition-colors`}
-                        >
-                          <option value="" disabled>
-                            Select Budget Range...
-                          </option>
-                          <option value="₹10,000 – ₹20,000">₹10,000 – ₹20,000</option>
-                          <option value="₹20,000 – ₹25,000">₹20,000 – ₹25,000</option>
-                          <option value="₹25,000 – ₹30,000">₹25,000 – ₹30,000</option>
-                          <option value="₹30,000 – ₹35,000">₹30,000 – ₹35,000</option>
-                          <option value="₹35,000 – ₹50,000">₹35,000 – ₹50,000</option>
-                          <option value="₹50,000 – ₹1,00,000">₹50,000 – ₹1,00,000</option>
-                          <option value="custom">Custom Price (Enter your own budget)</option>
-                        </select>
+                        />
                       </div>
                     </div>
 
