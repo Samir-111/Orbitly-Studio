@@ -8,8 +8,12 @@ export const createInquirySchema = z.object({
   email: z
     .string({ required_error: 'Email is required' })
     .email('Please provide a valid email address'),
-  service: z.string().default('Full-Stack Development'),
-  budget: z.string().default('$25k - $50k'),
+  service: z
+    .string({ required_error: 'Primary need/service is required' })
+    .min(1, 'Please select a primary need'),
+  budget: z
+    .string({ required_error: 'Estimated budget is required' })
+    .min(1, 'Please select or enter an estimated budget'),
   message: z
     .string({ required_error: 'Project requirements/message is required' })
     .min(10, 'Message must be at least 10 characters'),

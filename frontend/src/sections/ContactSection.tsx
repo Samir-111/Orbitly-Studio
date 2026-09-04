@@ -6,11 +6,15 @@ import { inquiriesApi } from '../services/api';
 import { ScrollReveal } from '../components/ScrollReveal';
 
 export const ContactSection: React.FC = () => {
+  const [serviceOption, setServiceOption] = useState('');
+  const [customService, setCustomService] = useState('');
+  const [budgetOption, setBudgetOption] = useState('');
+  const [customPrice, setCustomPrice] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    service: 'Full-Stack Development',
-    budget: '$25k - $50k',
+    service: '',
+    budget: '',
     message: '',
   });
 
@@ -24,8 +28,49 @@ export const ContactSection: React.FC = () => {
       setSubmitting(true);
       setErrorMessage(null);
 
+      // Validate primary need selection
+      if (!serviceOption) {
+        setErrorMessage('Please select your primary need.');
+        setSubmitting(false);
+        return;
+      }
+
+      // Determine final service string
+      let finalService = serviceOption;
+      if (serviceOption === 'custom') {
+        if (!customService.trim()) {
+          setErrorMessage('Please specify your custom requirement.');
+          setSubmitting(false);
+          return;
+        }
+        finalService = customService.trim();
+      }
+
+      // Validate budget selection
+      if (!budgetOption) {
+        setErrorMessage('Please select an estimated budget.');
+        setSubmitting(false);
+        return;
+      }
+
+      // Determine final budget string
+      let finalBudget = budgetOption;
+      if (budgetOption === 'custom') {
+        if (!customPrice.trim()) {
+          setErrorMessage('Please enter your custom budget amount.');
+          setSubmitting(false);
+          return;
+        }
+        const cleanedPrice = customPrice.trim();
+        finalBudget = cleanedPrice.startsWith('₹') ? cleanedPrice : `₹${cleanedPrice}`;
+      }
+
       // Submit inquiry directly to the backend database
-      await inquiriesApi.create(formData);
+      await inquiriesApi.create({
+        ...formData,
+        service: finalService,
+        budget: finalBudget,
+      });
 
       setSubmitted(true);
     } catch (err: any) {
@@ -98,11 +143,15 @@ export const ContactSection: React.FC = () => {
                     <button
                       onClick={() => {
                         setSubmitted(false);
+                        setServiceOption('');
+                        setCustomService('');
+                        setBudgetOption('');
+                        setCustomPrice('');
                         setFormData({
                           name: '',
                           email: '',
-                          service: 'Full-Stack Development',
-                          budget: '$25k - $50k',
+                          service: '',
+                          budget: '',
                           message: '',
                         });
                       }}
@@ -158,38 +207,132 @@ export const ContactSection: React.FC = () => {
                       {/* Service */}
                       <div className="space-y-1.5">
                         <label className="text-xs font-semibold uppercase tracking-wider text-[#9CA3B5]">
-                          Primary Need
+                          Primary Need *
                         </label>
                         <select
-                          value={formData.service}
-                          onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                          className="w-full bg-surface-elevated border border-[#20263A] rounded-xl px-4 py-2.5 text-sm text-[#F5F5F7] focus:outline-none focus:border-brand-500 transition-colors"
+                          required
+                          value={serviceOption}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setServiceOption(val);
+                            if (val !== 'custom') {
+                              setFormData({ ...formData, service: val });
+                            } else {
+                              setFormData({ ...formData, service: customService.trim() });
+                            }
+                          }}
+                          className={`w-full bg-surface-elevated border border-[#20263A] rounded-xl px-4 py-2.5 text-sm ${serviceOption ? 'text-[#F5F5F7]' : 'text-slate-400'
+                            } focus:outline-none focus:border-brand-500 transition-colors`}
                         >
+                          <option value="" disabled>
+                            Select Primary Need...
+                          </option>
                           <option value="Product Strategy">Product Strategy</option>
                           <option value="UI/UX Design">UI/UX Design</option>
                           <option value="Full-Stack Development">Full-Stack Development</option>
                           <option value="Mobile App">Mobile App (iOS/Android)</option>
                           <option value="Brand Identity">Brand Identity</option>
+                          <option value="custom">Other / Custom Requirement (Type your own)</option>
                         </select>
                       </div>
 
                       {/* Budget */}
                       <div className="space-y-1.5">
                         <label className="text-xs font-semibold uppercase tracking-wider text-[#9CA3B5]">
-                          Estimated Budget
+                          Estimated Budget (INR) *
                         </label>
                         <select
-                          value={formData.budget}
-                          onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                          className="w-full bg-surface-elevated border border-[#20263A] rounded-xl px-4 py-2.5 text-sm text-[#F5F5F7] focus:outline-none focus:border-brand-500 transition-colors"
+                          required
+                          value={budgetOption}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setBudgetOption(val);
+                            if (val !== 'custom') {
+                              setFormData({ ...formData, budget: val });
+                            } else {
+                              const cleaned = customPrice.trim();
+                              setFormData({
+                                ...formData,
+                                budget: cleaned ? (cleaned.startsWith('₹') ? cleaned : `₹${cleaned}`) : '',
+                              });
+                            }
+                          }}
+                          className={`w-full bg-surface-elevated border border-[#20263A] rounded-xl px-4 py-2.5 text-sm ${budgetOption ? 'text-[#F5F5F7]' : 'text-slate-400'
+                            } focus:outline-none focus:border-brand-500 transition-colors`}
                         >
-                          <option value="$15k - $25k">$15,000 – $25,000</option>
-                          <option value="$25k - $50k">$25,000 – $50,000</option>
-                          <option value="$50k - $100k">$50,000 – $100,000</option>
-                          <option value="$100k+">$100,000+</option>
+                          <option value="" disabled>
+                            Select Budget Range...
+                          </option>
+                          <option value="₹10,000 – ₹20,000">₹10,000 – ₹20,000</option>
+                          <option value="₹20,000 – ₹25,000">₹20,000 – ₹25,000</option>
+                          <option value="₹25,000 – ₹30,000">₹25,000 – ₹30,000</option>
+                          <option value="₹30,000 – ₹35,000">₹30,000 – ₹35,000</option>
+                          <option value="₹35,000 – ₹50,000">₹35,000 – ₹50,000</option>
+                          <option value="₹50,000 – ₹1,00,000">₹50,000 – ₹1,00,000</option>
+                          <option value="custom">Custom Price (Enter your own budget)</option>
                         </select>
                       </div>
                     </div>
+
+                    {/* Customer Custom Service/Requirement Input */}
+                    {serviceOption === 'custom' && (
+                      <div className="space-y-1.5 animate-fadeIn p-4 rounded-xl bg-surface-elevated/70 border border-[#8B7CF6]/40">
+                        <label className="text-xs font-semibold uppercase tracking-wider text-[#8B7CF6] flex items-center gap-1.5">
+                          <span>Specify Your Requirement / Service Need *</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={customService}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setCustomService(val);
+                            setFormData({
+                              ...formData,
+                              service: val.trim(),
+                            });
+                          }}
+                          placeholder="e.g. AI Model Integration, Cloud DevOps, SEO & Growth, Custom CRM..."
+                          className="w-full bg-surface border border-[#20263A] focus:border-[#8B7CF6] rounded-xl px-4 py-2.5 text-sm text-[#F5F5F7] placeholder-slate-500 focus:outline-none transition-colors"
+                        />
+                        <p className="text-[11px] text-slate-400">
+                          Type any custom requirement or specialized service you need for your project.
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Customer Custom Budget Input */}
+                    {budgetOption === 'custom' && (
+                      <div className="space-y-1.5 animate-fadeIn p-4 rounded-xl bg-surface-elevated/70 border border-[#8B7CF6]/40">
+                        <label className="text-xs font-semibold uppercase tracking-wider text-[#8B7CF6] flex items-center gap-1.5">
+                          <span>Enter Your Custom Budget (₹ INR) *</span>
+                        </label>
+                        <div className="relative">
+                          <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-semibold text-sm">
+                            ₹
+                          </span>
+                          <input
+                            type="text"
+                            required
+                            value={customPrice}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setCustomPrice(val);
+                              const cleaned = val.trim();
+                              setFormData({
+                                ...formData,
+                                budget: cleaned ? (cleaned.startsWith('₹') ? cleaned : `₹${cleaned}`) : '',
+                              });
+                            }}
+                            placeholder="e.g. 75,000 or 3.5 Lakhs"
+                            className="w-full bg-surface border border-[#20263A] focus:border-[#8B7CF6] rounded-xl pl-8 pr-4 py-2.5 text-sm text-[#F5F5F7] placeholder-slate-500 focus:outline-none transition-colors"
+                          />
+                        </div>
+                        <p className="text-[11px] text-slate-400">
+                          Feel free to write any budget or rate in Indian Rupees.
+                        </p>
+                      </div>
+                    )}
 
                     {/* Message */}
                     <div className="space-y-1.5">

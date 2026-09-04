@@ -27,12 +27,13 @@ const inquirySchema = new Schema<IInquiry>(
     },
     service: {
       type: String,
-      required: [true, 'Service is required'],
-      default: 'Full-Stack Development',
+      required: [true, 'Primary need / service is required'],
+      trim: true,
     },
     budget: {
       type: String,
-      default: '$25k - $50k',
+      required: [true, 'Estimated budget is required'],
+      trim: true,
     },
     message: {
       type: String,
