@@ -5,13 +5,14 @@ import { Project } from '../types';
 import { projectsApi } from '../services/api';
 import { ProjectCard } from '../components/ProjectCard';
 import { ScrollReveal } from '../components/ScrollReveal';
-import { Layers, RefreshCw, AlertCircle } from 'lucide-react';
+import { Layers, RefreshCw, AlertCircle, ChevronDown } from 'lucide-react';
 
 export const ProjectsSection: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>('All');
+  const [showAll, setShowAll] = useState<boolean>(false);
 
   const fetchProjects = async () => {
     try {
@@ -36,6 +37,9 @@ export const ProjectsSection: React.FC = () => {
     ? projects
     : projects.filter((p) => p.tags.some((tag) => tag.toLowerCase().includes(activeFilter.toLowerCase())));
 
+  // Show only 6 initially; expand when showAll is true
+  const displayedProjects = showAll ? filteredProjects : filteredProjects.slice(0, 6);
+
   return (
     <section id="work" className="py-24 relative section-radial-bg border-t border-[#20263A]/40">
       <div className="max-w-7xl mx-auto px-6 sm:px-8">
@@ -59,7 +63,10 @@ export const ProjectsSection: React.FC = () => {
               {filterCategories.map((category) => (
                 <button
                   key={category}
-                  onClick={() => setActiveFilter(category)}
+                  onClick={() => {
+                    setActiveFilter(category);
+                    setShowAll(false); // Reset to top 6 on filter change
+                  }}
                   className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
                     activeFilter === category
                       ? 'bg-brand-500 text-white shadow-sm'
@@ -117,15 +124,37 @@ export const ProjectsSection: React.FC = () => {
 
         {/* Projects Grid with Staggered Scroll Reveal */}
         {!loading && !error && filteredProjects.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProjects.map((project, index) => (
-              <ScrollReveal key={project._id} delay={index * 80}>
-                <ProjectCard project={project} />
-              </ScrollReveal>
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {displayedProjects.map((project, index) => (
+                <ScrollReveal key={project._id} delay={index * 80}>
+                  <ProjectCard project={project} />
+                </ScrollReveal>
+              ))}
+            </div>
+
+            {/* View All / Show Less Toggle Button */}
+            {filteredProjects.length > 6 && (
+              <div className="mt-14 text-center">
+                <button
+                  onClick={() => setShowAll(!showAll)}
+                  className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-xs font-semibold bg-surface border border-white/10 hover:border-brand-500/50 hover:bg-white/5 text-white transition-all shadow-lg hover:shadow-brand-500/10 group cursor-pointer"
+                >
+                  <span>
+                    {showAll ? 'Show Less' : 'View All'}
+                  </span>
+                  <ChevronDown
+                    className={`w-4 h-4 text-brand-400 transition-transform duration-300 ${
+                      showAll ? 'rotate-180' : 'group-hover:translate-y-0.5'
+                    }`}
+                  />
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </section>
   );
 };
+

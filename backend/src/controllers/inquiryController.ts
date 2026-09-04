@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { Inquiry } from '../models/Inquiry';
 import { AuthRequest } from '../middleware/authMiddleware';
+import {
+  sendInquiryNotificationToAdmin,
+  sendInquiryConfirmationToClient,
+} from '../services/emailService';
 
 // POST /api/inquiries
 // Public: Customer submits new project inquiry from the website
@@ -10,8 +14,18 @@ export const createInquiry = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    // 1. Save inquiry document into MongoDB
     const inquiry = await Inquiry.create(req.body);
 
+    // 2. Asynchronously send email notifications (Non-blocking & failure-resilient)
+    sendInquiryNotificationToAdmin(inquiry).catch((err) =>
+      console.warn('[InquiryController] Admin email dispatch error:', err)
+    );
+    sendInquiryConfirmationToClient(inquiry).catch((err) =>
+      console.warn('[InquiryController] Client confirmation email dispatch error:', err)
+    );
+
+    // 3. Respond with 201 Created and saved inquiry data
     res.status(201).json({
       success: true,
       message: 'Project inquiry submitted successfully. Orbitly Studio will contact you soon.',

@@ -5,12 +5,13 @@ import { BlogPost } from '../types';
 import { blogApi } from '../services/api';
 import { BlogCard } from '../components/BlogCard';
 import { ScrollReveal } from '../components/ScrollReveal';
-import { BookOpen, RefreshCw, AlertCircle } from 'lucide-react';
+import { BookOpen, RefreshCw, AlertCircle, ChevronDown } from 'lucide-react';
 
 export const BlogSection: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState<boolean>(false);
 
   const fetchBlogPosts = async () => {
     try {
@@ -28,6 +29,9 @@ export const BlogSection: React.FC = () => {
   useEffect(() => {
     fetchBlogPosts();
   }, []);
+
+  // Show only 6 initially; expand when showAll is true
+  const displayedPosts = showAll ? posts : posts.slice(0, 6);
 
   return (
     <section id="blog" className="py-24 relative section-radial-bg border-t border-[#20263A]/40">
@@ -91,13 +95,34 @@ export const BlogSection: React.FC = () => {
 
         {/* Blog Cards Grid with Staggered Scroll Reveal */}
         {!loading && !error && posts.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.slice(0, 6).map((post, index) => (
-              <ScrollReveal key={post._id} delay={index * 80}>
-                <BlogCard post={post} />
-              </ScrollReveal>
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {displayedPosts.map((post, index) => (
+                <ScrollReveal key={post._id} delay={index * 80}>
+                  <BlogCard post={post} />
+                </ScrollReveal>
+              ))}
+            </div>
+
+            {/* View All / Show Less Toggle Button */}
+            {posts.length > 6 && (
+              <div className="mt-14 text-center">
+                <button
+                  onClick={() => setShowAll(!showAll)}
+                  className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-xs font-semibold bg-surface border border-white/10 hover:border-brand-500/50 hover:bg-white/5 text-white transition-all shadow-lg hover:shadow-brand-500/10 group cursor-pointer"
+                >
+                  <span>
+                    {showAll ? 'Show Less' : 'View All'}
+                  </span>
+                  <ChevronDown
+                    className={`w-4 h-4 text-brand-400 transition-transform duration-300 ${
+                      showAll ? 'rotate-180' : 'group-hover:translate-y-0.5'
+                    }`}
+                  />
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </section>
